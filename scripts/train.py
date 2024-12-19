@@ -7,7 +7,7 @@ from datetime import datetime
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from models.VAE import VAE  # Import VAE từ thư mục models
-from utils.data_loader1 import CustomImageDataLoader as DataLoader  # Import DataLoader từ utils
+from utils.data_loader1 import DataLoader  # Import DataLoader từ utils
 
 
 class VAETrainer:
@@ -146,10 +146,10 @@ def main():
 
     # Cấu hình
     config = {
-        'latent_dim': 516,  # Đảm bảo latent_dim giống với cấu hình huấn luyện
+        'latent_dim': 512,  # Đảm bảo latent_dim giống với cấu hình huấn luyện
         'input_shape': (128, 128, 3),  # 3 kênh RGB
         'learning_rate': 1e-3,
-        'epochs': 100,
+        'epochs': 70,
         'batch_size': 32
     }
     """config = {
@@ -163,7 +163,7 @@ def main():
     # Tạo DataLoader
     #data_loader = DataLoader(batch_size=config['batch_size'], img_size=config['input_shape'][:2])
     data_dir = "/content/Generative_Image_Using_VAE/data/raw"
-    data_loader = DataLoader(data_dir=data_dir,batch_size=config['batch_size'], img_size=config['input_shape'][:2])
+    data_loader = DataLoader(data_dir=data_dir, batch_size=config['batch_size'], img_size=config['input_shape'][:2])
 
     # Tải dữ liệu chỉ chứa số cụ thể, ví dụ số 5
     #train_dataset, test_dataset = data_loader.load_dataset(digit=5)

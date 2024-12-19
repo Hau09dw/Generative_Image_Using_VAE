@@ -2,8 +2,8 @@ import tensorflow as tf
 import os
 import glob
 
-class CustomImageDataLoader:
-    def init(self, data_dir, batch_size=32, img_size=(64, 64)):
+class DataLoader:  # Đổi tên class từ CustomImageDataLoader thành DataLoader
+    def __init__(self, data_dir, batch_size=32, img_size=(64, 64)):
         """
         DataLoader để tải và xử lý ảnh từ thư mục.
 
@@ -51,36 +51,36 @@ class CustomImageDataLoader:
         # Lấy danh sách đường dẫn ảnh
         image_paths = glob.glob(os.path.join(self.data_dir, "*.jpg"))
         total_images = len(image_paths)
-
+        
         if total_images == 0:
             raise ValueError(f"Không tìm thấy ảnh JPG trong thư mục {self.data_dir}")
 
         # Tạo dataset từ đường dẫn ảnh
         dataset = tf.data.Dataset.from_tensor_slices(image_paths)
-
+        
         # Xáo trộn dataset
         dataset = dataset.shuffle(buffer_size=total_images)
-
+        
         # Chia dataset
         val_size = int(total_images * validation_split)
         train_size = total_images - val_size
-
+        
         # Tạo tập train và validation
         train_dataset = dataset.take(train_size)
         val_dataset = dataset.skip(train_size)
-
+        
         # Xử lý dữ liệu cho tập train
         train_dataset = (train_dataset
                         .map(self._load_and_preprocess_image, 
                              num_parallel_calls=tf.data.AUTOTUNE)
                         .batch(self.batch_size)
                         .prefetch(tf.data.AUTOTUNE))
-
+        
         # Xử lý dữ liệu cho tập validation
         val_dataset = (val_dataset
                       .map(self._load_and_preprocess_image,
                            num_parallel_calls=tf.data.AUTOTUNE)
                       .batch(self.batch_size)
                       .prefetch(tf.data.AUTOTUNE))
-
+        
         return train_dataset, val_dataset
