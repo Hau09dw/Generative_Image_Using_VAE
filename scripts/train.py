@@ -152,14 +152,7 @@ def main():
         'epochs': 70,
         'batch_size': 32
     }
-    """config = {
-        'latent_dim': 512,  # Đảm bảo latent_dim giống với cấu hình huấn luyện
-        'input_shape': (128, 128, 3),  # 3 kênh RGB
-        'learning_rate': 1e-3,
-        'epochs': 50,
-        'batch_size': 32
-    }
-"""
+
     # Tạo DataLoader
     #data_loader = DataLoader(batch_size=config['batch_size'], img_size=config['input_shape'][:2])
     data_dir = "/content/Generative_Image_Using_VAE/data/raw"
