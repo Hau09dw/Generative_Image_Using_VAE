@@ -109,30 +109,40 @@ class VAETrainer:
 
     
     def train(self, dataset):
-        """
-        Huấn luyện mô hình trên tập dữ liệu.
-        """
-        for epoch in range(self.config['epochs']):
-            total_loss = 0
-            batch_count = 0
-            for batch in dataset:
-                loss = self.train_step(batch)
-                total_loss += loss
-                batch_count += 1
-            
-            avg_loss = total_loss / batch_count
+      """
+      Huấn luyện mô hình trên tập dữ liệu và lưu checkpoint với trọng số tốt nhất.
+      """
+      best_loss = float('inf')  # Khởi tạo loss tốt nhất là vô cùng lớn
+      best_checkpoint_path = "results/checkpoints/vae_best.weights.h5"
+      os.makedirs(os.path.dirname(best_checkpoint_path), exist_ok=True)
 
-            # Log thông tin lên TensorBoard
-            with self.summary_writer.as_default():
-                tf.summary.scalar('Loss', avg_loss, step=epoch)
+      for epoch in range(self.config['epochs']):
+          total_loss = 0
+          batch_count = 0
+          for batch in dataset:
+              loss = self.train_step(batch)
+              total_loss += loss
+              batch_count += 1
 
-            print(f"Epoch {epoch+1}, Loss: {avg_loss.numpy()}")
+          avg_loss = total_loss / batch_count
 
-            # Lưu checkpoint với định dạng .weights.h5
-            if (epoch + 1) % 20 == 0:  # Save every 10 epochs
-                checkpoint_path = f"results/checkpoints/vae_epoch_{epoch+1}.weights.h5"
-                os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
-                self.vae.save_weights(checkpoint_path)
+          # Log thông tin lên TensorBoard
+          with self.summary_writer.as_default():
+              tf.summary.scalar('Loss', avg_loss, step=epoch)
+
+          print(f"Epoch {epoch+1}, Loss: {avg_loss.numpy()}")
+
+          # Lưu checkpoint định kỳ
+          if (epoch + 1) % 20 == 0:
+              checkpoint_path = f"results/checkpoints/vae_epoch_{epoch+1}.weights.h5"
+              self.vae.save_weights(checkpoint_path)
+
+          # Cập nhật và lưu checkpoint tốt nhất nếu loss thấp hơn
+          if avg_loss < best_loss:
+              best_loss = avg_loss
+              self.vae.save_weights(best_checkpoint_path)
+              print(f"New best model saved at epoch {epoch+1} with loss {best_loss.numpy()}")
+
 
 def main():
     """
@@ -155,7 +165,7 @@ def main():
 
     # Tạo DataLoader
     #data_loader = DataLoader(batch_size=config['batch_size'], img_size=config['input_shape'][:2])
-    data_dir = "/content/Generative_Image_Using_VAE/data/raw"
+    data_dir = "/content/Generative_Image_Using_VAE/data/raw2/img_align_celeba"
     data_loader = DataLoader(data_dir=data_dir, batch_size=config['batch_size'], img_size=config['input_shape'][:2])
 
     # Tải dữ liệu chỉ chứa số cụ thể, ví dụ số 5

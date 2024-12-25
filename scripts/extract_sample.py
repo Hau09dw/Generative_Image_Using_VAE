@@ -4,7 +4,7 @@ import random
 import shutil
 from google.colab import drive
 
-def extract_sample_images(zip_path, output_dir, sample_size=(20000)):
+def extract_sample_images(zip_path, output_dir, sample_size=(20000,20000)):
     """
     Extract a random sample of images from a zip file
     
@@ -52,7 +52,7 @@ output_dir = '/content/Generative_Image_Using_VAE/data/raw1'
 num_extracted = extract_sample_images(
     zip_path=zip_path,
     output_dir=output_dir,
-    sample_size=(20000)
+    sample_size=(20000,20000)
 )
 
 print(f"Successfully extracted {num_extracted} images to {output_dir}")
